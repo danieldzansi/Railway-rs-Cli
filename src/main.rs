@@ -129,11 +129,34 @@ fn create_tarball(source: &str, output: &str) -> Result<()> {
     use flate2::write::GzEncoder;
     use flate2::Compression;
     use std::fs::File;
+    use walkdir::WalkDir;
+
+    let skip_dirs = ["node_modules", ".git", "target", ".next", ".nuxt", "dist", "__pycache__", ".venv", "venv"];
 
     let tar_gz = File::create(output)?;
     let enc = GzEncoder::new(tar_gz, Compression::default());
     let mut tar = tar::Builder::new(enc);
-    tar.append_dir_all(".", source)?;
+
+    for entry in WalkDir::new(source).into_iter().filter_map(|e| e.ok()) {
+        let path = entry.path();
+        
+        // Skip unwanted directories
+        if path.components().any(|c| {
+            skip_dirs.contains(&c.as_os_str().to_str().unwrap_or(""))
+        }) {
+            continue;
+        }
+
+        let relative = path.strip_prefix(source)?;
+        if relative.as_os_str().is_empty() { continue; }
+
+        if path.is_file() {
+            tar.append_path_with_name(path, relative)?;
+        } else if path.is_dir() {
+            tar.append_dir(relative, path)?;
+        }
+    }
+
     tar.finish()?;
     Ok(())
 }
