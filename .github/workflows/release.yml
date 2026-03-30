@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: koda-linux
-          path: target/x86_64-unknown-linux-gnu/release/railway-rs
+          path: target/x86_64-unknown-linux-gnu/release/koda
 
   build-macos-x86:
     runs-on: macos-latest
@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: koda-macos-x86
-          path: target/x86_64-apple-darwin/release/railway-rs
+          path: target/x86_64-apple-darwin/release/koda
 
   build-macos-arm:
     runs-on: macos-latest
@@ -66,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: koda-macos-arm
-          path: target/aarch64-apple-darwin/release/railway-rs
+          path: target/aarch64-apple-darwin/release/koda
 
   build-windows:
     runs-on: windows-latest
@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: koda-windows
-          path: target/x86_64-pc-windows-msvc/release/railway-rs.exe
+          path: target/x86_64-pc-windows-msvc/release/koda.exe
 
   release:
     needs: [build-linux, build-macos-x86, build-macos-arm, build-windows]
@@ -97,10 +97,10 @@ jobs:
 
       - name: Rename binaries
         run: |
-          mv koda-linux/railway-rs koda-x86_64-linux
-          mv koda-macos-x86/railway-rs koda-x86_64-macos
-          mv koda-macos-arm/railway-rs koda-aarch64-macos
-          mv koda-windows/railway-rs.exe koda-x86_64-windows.exe
+          mv koda-linux/koda koda-x86_64-linux
+          mv koda-macos-x86/koda koda-x86_64-macos
+          mv koda-macos-arm/koda koda-aarch64-macos
+          mv koda-windows/koda.exe koda-x86_64-windows.exe
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
